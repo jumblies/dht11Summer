@@ -102,8 +102,11 @@ void loop() {
     Serial.print("Sunrise: ");
     Serial.print((int) today[tl_hour]);
     Serial.print(":");
-    Serial.println((int) today[tl_minute]);
+    Serial.print((int) today[tl_minute]);
+    Serial.print(" ");
   }
+  int sunriseHour = ((int) today[tl_hour]);
+  int sunriseMinute = ((int) today[tl_minute]);
   if (tardis.SunSet(today)) // if the sun will set today (it might not, in the [ant]arctic)
   {
     Serial.print("Sunset: ");
@@ -111,6 +114,8 @@ void loop() {
     Serial.print(":");
     Serial.println((int) today[tl_minute]);
   }
+  int sunsetHour = (int) today[tl_hour];
+  int sunsetMinute = (int) today[tl_minute];
 
   float h = dht.readHumidity();    // reading Humidity
   float t = dht.readTemperature(); // read Temperature as Celsius (the default)
@@ -121,25 +126,27 @@ void loop() {
   }
   t = (32 + (9 * t) / 5);
   float farenheight = t;
-
+  Serial.print("Current conditions (Temp/Hum): ");    //print current environmental conditions
   Serial.print(t, 2);    //print the temperature
   Serial.print("\t");
   Serial.println(h, 2);  //print the humidity
   delay(2000);           //wait 2 seconds
+  Serial.print("Human time = ");
   Serial.print(now.hour(), DEC);
   Serial.print(':');
-  Serial.print(now.minute(), DEC);
-  Serial.print(':');
-  Serial.print(now.second(), DEC);
-  Serial.println();
-
-
-  int sunsetHour = (int) today[tl_hour];
-  int sunsetMinute = (int) today[tl_minute];
+  Serial.println(now.minute(), DEC);
+  Serial.print("Unixtime = ");
+  Serial.print(now.unixtime());
+  Serial.println("s");
+  Serial.print("Morning Lights from: ");
+  Serial.print(sunriseHour);
+  Serial.print(" until ");
+  Serial.println(sunriseHour + 2);
+  Serial.print("Evening Lights from: ");
   Serial.print(sunsetHour);
   Serial.print(" until ");
   Serial.println(sunsetHour + 2);
-  if ((now.hour() >= sunsetHour && now.hour() <= (sunsetHour + 2)) || (now.hour() >= 7 && now.hour() < 8)) {
+  if ((now.hour() >= sunsetHour && now.hour() <= (sunsetHour + 2)) || (now.hour() >= sunriseHour && now.hour() <= (sunriseHour + 2))) {
 
     Serial.println("turn on the lights");
     //Turn the lights on so I know it's working
@@ -178,8 +185,8 @@ void loop() {
       analogWrite(GREENPIN, 255);
     }
   }
-  else {
-    analogWrite(REDPIN, 0);
+  else {                                //Shut the lights off if the above conditions are not met
+    analogWrite(REDPIN, 0);             //Meaning that it's not time for them to be on.
     analogWrite(BLUEPIN, 0);
     analogWrite(GREENPIN, 0);
   }
