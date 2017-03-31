@@ -3,6 +3,8 @@
 #include <Wire.h>
 #include "RTClib.h"
 #include <TimeLord.h>
+
+
 RTC_DS1307 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
@@ -144,9 +146,14 @@ void loop() {
   Serial.println(sunriseHour + 2);
   Serial.print("Evening Lights from: ");
   Serial.print(sunsetHour);
+  Serial.print(":");
+  Serial.print(sunsetMinute);
   Serial.print(" until ");
-  Serial.println(sunsetHour + 2);
-  if ((now.hour() >= sunsetHour && now.hour() <= (sunsetHour + 2)) || (now.hour() >= sunriseHour && now.hour() <= (sunriseHour + 2))) {
+  Serial.print(sunsetHour + 2);
+  Serial.print(":");
+  Serial.println(sunsetMinute);
+  if ((now.hour() >= sunsetHour && now.minute() >= sunsetMinute) && (now.hour() <= (sunsetHour + 2) && now.minute() <= sunsetMinute) || ((now.hour() >= sunriseHour && now.hour() <= (sunriseHour + 2)))) //kept simple for sunrise.
+  {
 
     Serial.println("turn on the lights");
     //Turn the lights on so I know it's working
